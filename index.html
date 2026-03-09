@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organiza+ | Dashboard</title>
+
+  <!-- Bootstrap -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="tema.css">
+  <link rel="stylesheet" href="style.css" />
+</head>
+
+<body class="bg-organiza">
+
+  <main class="container py-4" style="max-width: 980px;">
+
+    <!-- TOPO -->
+    <div class="d-flex justify-content-between align-items-start gap-3 flex-wrap mb-3">
+
+      <div class="d-flex align-items-start gap-3">
+        <!-- SINO DE ALERTAS -->
+        <button id="btnAlertas" type="button"
+          class="btn btn-light position-relative border"
+          data-bs-toggle="modal" data-bs-target="#modalAlertas"
+          aria-label="Alertas de vencimento">
+          🔔
+          <span id="badgeAlertas"
+            class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger d-none">
+            0
+          </span>
+        </button>
+
+        <div>
+          <h1 class="fst-italic fw-normal m-0">DASHBOARD</h1>
+          <p class="text-muted small m-0">Olá, <span id="perfilNomeTopo">usuário</span> 👋</p>
+        </div>
+      </div>
+
+      <div class="text-end">
+        <div class="d-flex align-items-center justify-content-end gap-2">
+          <span class="fw-bold small" id="saldoLabel">SALDO:</span>
+          <button id="btnToggleSaldo" class="btn btn-sm btn-outline-secondary" type="button">👁</button>
+        </div>
+
+        <div id="saldoBox" class="bg-box px-3 py-2 mt-2 rounded-2 small">
+          R$ 0,00
+        </div>
+
+        <div class="tema-switch" title="Alternar tema">
+          <input type="checkbox" id="temaToggle" class="tema-switch__input" aria-label="Alternar tema">
+          <label for="temaToggle" class="tema-switch__label">
+            <span class="tema-switch__icon tema-switch__sun">☀</span>
+            <span class="tema-switch__icon tema-switch__moon">🌙</span>
+            <span class="tema-switch__thumb" aria-hidden="true"></span>
+          </label>
+        </div>
+       
+    <div class="row g-3">
+
+      <!-- CARD ATALHOS -->
+      <div class="col-12 col-lg-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <h5 class="card-title mb-3">Atalhos</h5>
+
+            <div class="d-grid gap-2">
+              <a class="btn btn-primary" href="financeiro.html">📌 Financeiro</a>
+              <a class="btn btn-outline-primary" href="receita.html">➕ Receita</a>
+              <a class="btn btn-outline-danger" href="despesa.html">➖ Despesa</a>
+              <a class="btn btn-outline-secondary" href="perfil.html">👤 Perfil</a>
+              <a class="btn btn-outline-secondary" href="extrato.html">📄 Extrato</a>
+              <button class="btn btn-warning" id="btnSair" type="button">Sair</button>
+            </div>
+
+            <hr class="my-3">
+
+            </div>
+        </div>
+      </div>
+
+      <!-- CARD GRÁFICO BARRAS -->
+      <div class="col-12 col-lg-8">
+        <div class="card shadow-sm h-100">
+          <div class="card-body text-center">
+            <h5 class="card-title mb-2">Receitas x Despesas </h5>
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Mês
+              </button>
+              <ul class="dropdown-menu">
+                <li><a class="dropdown-item" href="#">Janeiro</a></li>
+                <li><a class="dropdown-item" href="#">Fevereiro</a></li>
+                <li><a class="dropdown-item" href="#">Março</a></li>
+                <li><a class="dropdown-item" href="#">Abril</a></li>
+                <li><a class="dropdown-item" href="#">Maio</a></li>
+                <li><a class="dropdown-item" href="#">Junho</a></li>
+                <li><a class="dropdown-item" href="#">Julho</a></li>
+                <li><a class="dropdown-item" href="#">Agosto</a></li>
+                <li><a class="dropdown-item" href="#">Setembro</a></li>
+                <li><a class="dropdown-item" href="#">Outubro</a></li>
+                <li><a class="dropdown-item" href="#">Novembro</a></li>
+                <li><a class="dropdown-item" href="#">Dezembro</a></li>
+                                
+              </ul>
+            </div>
+
+            <p class="text-muted small mb-3" id="mesAtualLabel"></p>
+
+            <div class="d-flex justify-content-center gap-3 flex-wrap mb-3">
+              <span class="badge text-bg-primary" id="totalReceitaMes">Receitas: R$ 0,00</span>
+              <span class="badge text-bg-danger" id="totalDespesaMes">Despesas: R$ 0,00</span>
+              <span class="badge text-bg-secondary" id="saldoMes">Saldo: R$ 0,00</span>
+            </div>
+
+            <div class="chart-area">
+              <div class="bars">
+                <div class="bar-group">
+                  <div class="bar receita" id="barReceita" style="height: 120px;"></div>
+                  <div class="bar-label">Receita</div>
+                </div>
+
+                <div class="bar-group">
+                  <div class="bar despesas" id="barDespesas" style="height: 120px;"></div>
+                  <div class="bar-label">Despesas</div>
+                </div>
+              </div>
+            </div>
+
+            </div>
+        </div>
+      </div>
+
+      <!-- NOVO CARD: GRÁFICO DE LINHA -->
+      <div class="col-12">
+        <div class="card shadow-sm">
+          <div class="card-body">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <h5 class="card-title mb-0">Evolução do saldo (últimos 30 dias)</h5>
+              <span class="text-muted small" id="linhaInfo"></span>
+            </div>
+
+            <div class="mt-3" style="height: 320px;">
+              <canvas id="graficoLinha"></canvas>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <p class="text-center mt-4 small text-muted">@produzido por Silvia Borges 2026</p>
+  </main>
+
+  <!-- MODAL ALERTAS -->
+  <div class="modal fade" id="modalAlertas" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+
+        <div class="modal-header">
+          <h5 class="modal-title">🔔 Alertas de vencimento</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fechar"></button>
+        </div>
+
+        <div class="modal-body">
+          <p class="text-muted small mb-2" id="resumoAlertas"></p>
+          <div class="list-group" id="listaAlertas"></div>
+          <p class="text-muted small mt-3 mb-0">
+            *Somente despesas “Em aberto” aparecem aqui.
+          </p>
+        </div>
+
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Fechar</button>
+        </div>
+
+        </div>
+    </div>
+  </div>
+
+  
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <script src="script.js"></script>
+</body>
+</html>

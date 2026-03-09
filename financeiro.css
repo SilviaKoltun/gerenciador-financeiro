@@ -1,0 +1,6 @@
+:root{--bg: #dbeaf6; --box: #c8d8e8;}
+.bg-organiza{ background: var(--bg); }
+.bg-box{ background: var(--box) !important; }
+.lanc-valor{font-weight: 700; white-space: nowrap;}
+.lanc-valor.receita{ color: #0d6efd; }  /* azul bootstrap */
+.lanc-valor.despesa{ color: #dc3545; }  /* vermelho bootstrap */

@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Organiza+ | Extrato</title>
+
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="tema.css">
+  <link rel="stylesheet" href="extrato.css">
+</head>
+
+<body class="bg-organiza">
+  <main class="container py-4" style="max-width: 980px;">
+
+    <!-- Topo -->
+    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+      <div>
+        <h1 class="fst-italic fw-normal m-0">EXTRATO</h1>
+        <p class="text-muted small m-0">Todos os lançamentos</p>
+      </div>
+      <div class="d-flex gap-2 flex-wrap">
+        <a class="btn btn-outline-secondary btn-sm" href="financeiro.html">← Financeiro</a>
+        <a class="btn btn-outline-secondary btn-sm" href="index.html">Dashboard</a>
+        <div class="tema-switch">
+          <input type="checkbox" id="temaToggle" class="tema-switch__input">
+          <label for="temaToggle" class="tema-switch__label">
+            <span>☀</span>
+            <span>🌙</span>
+            <span class="tema-switch__thumb"></span>
+          </label>
+        </div>
+      </div>
+    </div>
+
+    <!-- Resumo -->
+    <div class="row g-3 mb-3">
+      <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="text-muted small">Saldo</div>
+            <div class="fs-4 fw-bold" id="resumoSaldo">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="text-muted small">Receitas</div>
+            <div class="fs-5 fw-bold text-primary" id="resumoReceita">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+      <div class="col-12 col-md-4">
+        <div class="card shadow-sm h-100">
+          <div class="card-body">
+            <div class="text-muted small">Despesas</div>
+            <div class="fs-5 fw-bold text-danger" id="resumoDespesa">R$ 0,00</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Filtros -->
+    <div class="card shadow-sm mb-3">
+      <div class="card-body">
+        <div class="row g-2 align-items-end">
+          <div class="col-12 col-md-4">
+            <label class="form-label small">Buscar por descrição</label>
+            <input id="fBusca" type="text" class="form-control bg-box border-0" placeholder="Ex: mercado, salário...">
+          </div>
+
+          <div class="col-12 col-md-2">
+            <label class="form-label small">Tipo</label>
+            <select id="fTipo" class="form-select bg-box border-0">
+              <option value="todos">Todos</option>
+              <option value="receita">Receita</option>
+              <option value="despesa">Despesa</option>
+            </select>
+          </div>
+
+          <div class="col-6 col-md-3">
+            <label class="form-label small">De</label>
+            <input id="fDe" type="date" class="form-control bg-box border-0">
+          </div>
+
+          <div class="col-6 col-md-3">
+            <label class="form-label small">Até</label>
+            <input id="fAte" type="date" class="form-control bg-box border-0">
+          </div>
+        </div>
+
+        <div class="d-flex gap-2 flex-wrap mt-3">
+          <button class="btn btn-outline-secondary" id="btnLimparFiltros" type="button">Limpar filtros</button>
+          <a class="btn btn-primary" href="receita.html">➕ Receita</a>
+          <a class="btn btn-danger" href="despesa.html">➖ Despesa</a>
+
+          <button class="btn btn-outline-danger ms-auto" id="btnLimparTudo" type="button">
+            Limpar lançamentos (teste)
+          </button>
+        </div>
+
+        <p class="text-muted small mt-2 mb-0">
+          *O botão “Limpar lançamentos” é só para testes.
+        </p>
+      </div>
+    </div>
+
+    <!-- Lista -->
+    <div class="card shadow-sm">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-2">
+          <h5 class="m-0">Lançamentos</h5>
+          <span class="badge text-bg-light" id="contador">0</span>
+        </div>
+
+        <div class="list-group" id="lista"></div>
+
+        <p id="msg" class="small text-center mt-3 mb-0 text-muted"></p>
+      </div>
+    </div>
+
+    <p class="text-center mt-4 small text-muted">@produzido por Silvia Borges 2026</p>
+  </main>
+ <link rel="stylesheet" href="tema.css">
+ <script src="extrato.js"></script>
+ <script src="tema.js"></script>
+</body>
+</html>

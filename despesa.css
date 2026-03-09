@@ -1,0 +1,4 @@
+:root{--bg: #dbeaf6;--box: #c8d8e8;}
+.bg-organiza{ background: var(--bg); }
+.bg-box{ background: var(--box) !important; }
+  

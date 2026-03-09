@@ -1,0 +1,33 @@
+:root{--bg: #dbeaf6; --box: #c8d8e8; --card: #ffffff; --text: #1b1b1b; --muted: #6c757d;}
+body.dark{--bg: #121212; --box: #1f1f1f; --card: #1e1e1e; --text: #f1f1f1; --muted: #aaaaaa; }
+body{background: var(--bg); color: var(--text); transition: background .25s ease, color .25s ease;}
+.bg-organiza{background: var(--bg); color: var(--text);}
+.card{background: var(--card);  color: var(--text);} .list-group-item{background: var(--card); color: var(--text); } 
+.form-control, .form-select{ background: var(--box); color: var(--text);  border: none;}
+body.dark .form-control, body.dark .form-select{background: #232323; color: var(--text); } 
+body.dark .form-control::placeholder{color: rgba(255,255,255,.55);}
+.text-muted, .small.text-muted{ color: var(--muted) !important;}
+.bg-box{background: var(--box) !important; color: var(--text);}
+#btnTema{ position: fixed; top: 16px; right: 16px; z-index: 1055; width: 42px; height: 42px; display: grid; place-items: center; border-radius: 10px;}
+body.dark #btnTema{border-color: rgba(255,255,255,.25) !important; color: var(--text);}
+.card, .list-group-item, .bg-box, .btn, .form-control, .form-select{ transition: background .25s ease, color .25s ease, border-color .25s ease;}
+.tema-switch{ display: inline-block;}
+.tema-switch__input{position: absolute; opacity: 0; width: 1px; height: 1px;}
+.tema-switch{position: fixed; top: 20px; right: 20px;z-index: 9999;}
+.tema-switch__thumb{position: absolute; top: 3px; left: 3px; width: 28px; height: 28px; border-radius: 999px; background: #fff; box-shadow: 0 2px 8px rgba(0,0,0,.18); transition: transform .25s ease;}
+.tema-switch__icon{font-size: 14px; line-height: 1; z-index: 1; opacity: .9; }
+.tema-switch__input:checked + .tema-switch__label .tema-switch__thumb{transform: translateX(30px);}
+body.dark .tema-switch__label{background: rgba(27,27,27,.85); border-color: rgba(255,255,255,.25);}
+body.dark .tema-switch__thumb{ background: #2a2a2a;}
+.tema-switch{position: fixed; top: 20px; right: 20px;z-index: 9999}
+.tema-switch__input{position: absolute; opacity: 0; width: 0; height: 0;}
+.tema-switch__label{width: 64px; height: 32px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; justify-content: space-between; padding: 0 10px;  position: relative; background: rgba(255,255,255,.55); border: 1px solid rgba(0,0,0,.12); box-shadow: 0 8px 22px rgba(0,0,0,.10); backdrop-filter: blur(8px); transition: background .25s ease, border-color .25s ease;}
+.tema-switch__label span{ font-size: 14px; line-height: 1; z-index: 2; opacity: .9; user-select: none; }
+.tema-switch__thumb{ position: absolute; top: 50%; left: 4px; transform: translateY(-50%); width: 24px; height: 24px; border-radius: 50%;background: #ffffff; box-shadow: 0 8px 18px rgba(0,0,0,.18);transition: left .25s ease, background .25s ease;}
+.tema-switch__input:checked + .tema-switch__label{background: rgba(30,30,30,.55);border-color: rgba(255,255,255,.18);}
+.tema-switch__input:checked + .tema-switch__label .tema-switch__thumb{left: calc(100% - 28px); background: #1f1f1f;}
+body.dark .tema-switch__label span{ opacity: 1;}
+@media (max-width: 480px){.tema-switch{ top: 14px; right: 14px;}
+ .tema-switch__label{width: 58px; height: 30px;}
+ .tema-switch__thumb{width: 22px; height: 22px; left: 4px;}
+ .tema-switch__input:checked + .tema-switch__label .tema-switch__thumb{left: calc(100% - 26px);}}

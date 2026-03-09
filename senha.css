@@ -1,0 +1,6 @@
+:root{--bg: #dbeaf6; --box: #c8d8e8; --brand: #f05a28;}
+.bg-organiza{ background: var(--bg);}
+.bg-box{background: var(--box);}
+.perfil-card{ width: 100%; max-width: 520px;}
+.logo{color: var(--brand); font-weight: 700;}
+.plus{color: var(--brand); font-size: 22px; margin-top: -4px;}
