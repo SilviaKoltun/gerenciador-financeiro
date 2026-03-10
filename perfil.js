@@ -2,6 +2,8 @@ const form = document.getElementById("formPerfil");
 const nome = document.getElementById("nome");
 const email = document.getElementById("email");
 const telefone = document.getElementById("telefone");
+const senha = document.getElementById("Criar Senha");
+const Confirmacao = document.getElementById("Confirmar Senha")
 const btnEditar = document.getElementById("btnEditar");
 const msg = document.getElementById("msg");
 
@@ -9,6 +11,9 @@ const msg = document.getElementById("msg");
 nome.value = localStorage.getItem("perfil_nome") || "";
 email.value = localStorage.getItem("perfil_email") || "";
 telefone.value = localStorage.getItem("perfil_telefone") || "";
+senha.value = localStorage.getItem("perfil_senha") ||"";
+Confirmacao.value = localStorage.getItem("perfil_confirmar_senha") ||"";
+
 
 // travado por padrão
 nome.disabled = true;
