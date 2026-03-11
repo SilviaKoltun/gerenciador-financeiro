@@ -1,29 +1,41 @@
 const form = document.getElementById("formEsqueciSenha");
 const email = document.getElementById("email");
-const senha = document.getElementById("Criar Nova Senha");
-const Confirmacao = document.getElementById("Confirmar Senha");
-
+const senha = document.getElementById("novaSenha");
+const Confirmacao = document.getElementById("confirmarSenha"); 
+const msg = document.getElementById("mensagem");
 
 email.value = localStorage.getItem("esqueciSenha_email") || "";
-senha.value = localStorage.getItem("esqueciSenha_senha") ||"";
-Confirmacao.value = localStorage.getItem("esqueciSenha_confirmar_senha") ||"";
+senha.value = localStorage.getItem("esqueciSenha_senha") || "";
+confirmacao.value = localStorage.getItem("esqueciSenha_confirmar_senha") || "";
 
 form.addEventListener("submit", (e) => {
     e.preventDefault();
   
-    const email = inputEmail.value.trim();
-    const senha = inputSenha.value.trim();
-    const Confirmacao = inputSenha.value.trim();
+    const valorEmail = email.value.trim();
+    const valorSenha = senha.value.trim();
+    const valorConfirmacao = confirmacao.value.trim();
+
   
-    if (!email || !senha) {
-      msg.textContent = "Preencha login e senha.";
+    if (!valorEmail || !valorSenha || !valorConfirmacao) {
+      msg.textContent = "Preencha todos os campos.";
+      return;
+    }
+    if (valorSenha !== valorConfirmacao) {
+      msg.textContent = "As Senhas não coincidem.";
       return;
     }
   
-    // salva usuário logado
-    localStorage.setItem("usuarioLogado", login);
+    // salva 
+    localStorage.setItem("esqueciSenha_email", valorEmail);
+    localStorage.setItem("esqueciSenha_senha", valorSenha);
+    localStorage.setItem("esqueciSenha_confirmar_senha", valorConfirmacao);
   
-    // vai para o dashboard
-    window.location.href = "index.html";
-  });
+    msg.classList.remove("text-danger");
+    msg.classList.add("text-success");
+    msg.textContent = "Senha redefinida com sucesso!";
+  
+    setTimeout(() => {
+      window.location.href = "login.html";
+    }, 1000);
+});
   
