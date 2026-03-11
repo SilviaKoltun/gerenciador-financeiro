@@ -370,9 +370,9 @@ function renderGraficoLinha() {
   }
 
   // se já existir, destrói para recriar
-  if (chartLinha) chartLinha.destroy();
+  if (chartPizza) chartPizza.destroy();
 
-  chartLinha = new Chart(canvas, {
+  chartPizza = new Chart(canvas, {
     type: "line",
     data: {
       labels,
@@ -412,7 +412,7 @@ function renderGraficoLinha() {
 }
 
 // desenha quando abrir a página
-document.addEventListener("DOMContentLoaded", renderGraficoLinha);
+document.addEventListener("DOMContentLoaded", renderGraficoPizza);
 
 // se você salvar receita/despesa e voltar pro dashboard, atualiza:
-window.addEventListener("pageshow", renderGraficoLinha);
+window.addEventListener("pageshow", renderGraficoPizza);
