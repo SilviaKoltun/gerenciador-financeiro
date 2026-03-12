@@ -1,4 +1,3 @@
-// elementos
 const listaEl = document.getElementById("lista");
 const contadorEl = document.getElementById("contador");
 const msgEl = document.getElementById("msg");
@@ -15,7 +14,6 @@ const fAte = document.getElementById("fAte");
 const btnLimparFiltros = document.getElementById("btnLimparFiltros");
 const btnLimparTudo = document.getElementById("btnLimparTudo");
 
-// storage
 function lerLancamentos() {
   try { return JSON.parse(localStorage.getItem("lancamentos")) || []; }
   catch { return []; }
@@ -24,7 +22,6 @@ function salvarLancamentos(lista) {
   localStorage.setItem("lancamentos", JSON.stringify(lista));
 }
 
-// helpers
 function formatarBRL(valor) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -72,7 +69,6 @@ function aplicarFiltros(lista) {
   });
 }
 
-// lista
 function renderLista(listaFiltrada, listaOriginal) {
   listaEl.innerHTML = "";
 
@@ -145,12 +141,10 @@ function renderLista(listaFiltrada, listaOriginal) {
   });
 }
 
-// init
 let lancamentos = lerLancamentos();
 renderResumo(lancamentos);
 renderLista(aplicarFiltros(lancamentos), lancamentos);
 
-// eventos de filtro
 [fBusca, fTipo, fDe, fAte].forEach(el => {
   el.addEventListener("input", () => {
     renderLista(aplicarFiltros(lancamentos), lancamentos);

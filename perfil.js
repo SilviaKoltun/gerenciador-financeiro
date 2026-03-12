@@ -7,7 +7,6 @@ const Confirmacao = document.getElementById("Confirmar Senha")
 const btnEditar = document.getElementById("btnEditar");
 const msg = document.getElementById("msg");
 
-// carregar dados
 nome.value = localStorage.getItem("perfil_nome") || "";
 email.value = localStorage.getItem("perfil_email") || "";
 telefone.value = localStorage.getItem("perfil_telefone") || "";
@@ -57,6 +56,6 @@ form.addEventListener("submit", (e) => {
   msg.textContent = "Perfil salvo com sucesso! ✅";
   msg.className = "text-center small text-success mt-3 mb-0";
 
-  // vai para o dashboard
+ 
   window.location.href = "index.html";
 });

@@ -9,7 +9,6 @@ const resumoDespesa = document.getElementById("resumoDespesa");
 
 const btnLimparTudo = document.getElementById("btnLimparTudo");
 
-// ===== Storage =====
 function lerLancamentos() {
   try { return JSON.parse(localStorage.getItem("lancamentos")) || []; }
   catch { return []; }
@@ -19,7 +18,6 @@ function salvarLancamentos(lista) {
   localStorage.setItem("lancamentos", JSON.stringify(lista));
 }
 
-// ===== Helpers =====
 function formatarBRL(valor) {
   return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
 }
@@ -30,7 +28,6 @@ function somar(lista, tipo) {
     .reduce((acc, i) => acc + Number(i.valor || 0), 0);
 }
 
-// ===== Resumo =====
 function renderResumo(lista) {
   const totalR = somar(lista, "receita");
   const totalD = somar(lista, "despesa");
@@ -41,7 +38,6 @@ function renderResumo(lista) {
   resumoSaldo.textContent = formatarBRL(saldo);
 }
 
-// ===== Lista =====
 function renderLista(lista) {
   listaEl.innerHTML = "";
 
@@ -119,25 +115,21 @@ function renderLista(lista) {
   });
 }
 
-// ===== Busca =====
 function aplicarBusca(lista, texto) {
   const t = texto.trim().toLowerCase();
   if (!t) return lista;
   return lista.filter(l => (l.descricao || "").toLowerCase().includes(t));
 }
 
-// ===== Init =====
 let lancamentos = lerLancamentos();
 renderResumo(lancamentos);
 renderLista(lancamentos);
 
-// buscar
 campoBusca.addEventListener("input", () => {
   const filtrada = aplicarBusca(lancamentos, campoBusca.value);
   renderLista(filtrada);
 });
 
-// excluir
 listaEl.addEventListener("click", (e) => {
   const btn = e.target.closest("[data-del]");
   if (!btn) return;

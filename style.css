@@ -18,3 +18,9 @@ body.dark .form-control::placeholder{color: rgba(255,255,255,.55); }
 body.dark .btn-outline-secondary,  body.dark .btn-outline-dark{ color: var(--text); border-color: rgba(255,255,255,.25);}
 body.dark .btn-outline-secondary:hover, body.dark .btn-outline-dark:hover{ background: rgba(255,255,255,.08);}
 body.dark #btnAlertas{ background: var(--card); border-color: rgba(255,255,255,.20) !important; color: var(--text);}
+body { font-family: Arial, sans-serif; display: flex; justify-content: center; padding-top: 50px; }
+.container { border: 1px solid #ccc; padding: 20px; border-radius: 8px; box-shadow: 2px 2px 10px #eee; }
+input[type="month"] { padding: 10px; font-size: 16px; border: 1px solid #ddd; border-radius: 4px; }
+button { padding: 10px 15px; font-size: 16px; background-color: #007BFF; color: white; border: none; border-radius: 4px; cursor: pointer; }
+button:hover { background-color: #0056b3; }
+#resultado { margin-top: 15px; font-weight: bold; }
