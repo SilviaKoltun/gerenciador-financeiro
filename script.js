@@ -1,9 +1,5 @@
 const MODO_TESTE = true;
 
-let graficoResumo = null;
-let graficoLinha = null;
-
-// HELPERS
 function lerLancamentos() {
   try {
     return JSON.parse(localStorage.getItem("lancamentos")) || [];
@@ -48,7 +44,6 @@ function somarMes(lista, tipo, mesAno) {
     .reduce((acc, l) => acc + Number(l.valor || 0), 0);
 }
 
-// LOGIN
 const usuario = localStorage.getItem("usuarioLogado");
 if (!MODO_TESTE && !usuario) {
   window.location.href = "login.html";
@@ -59,28 +54,7 @@ function preencherNomeTopo() {
   if (el) el.textContent = usuario || "Visitante";
 }
 
-// MÊS SELECIONADO
-function getMesSelecionado() {
-  const input = document.getElementById("mesAno");
-  return input?.value || getMesAnoAtual();
-}
 
-function exibirMesSelecionado() {
-  const valor = getMesSelecionado();
-  const resultado = document.getElementById("resultado");
-  if (!resultado) return;
-
-  if (!valor) {
-    resultado.textContent = "Nenhum mês selecionado.";
-    return;
-  }
-
-  const [ano, mes] = valor.split("-");
-  const mesNome = nomeMesPt(Number(mes) - 1);
-  resultado.textContent = `Período selecionado: ${mesNome} / ${ano}`;
-}
-
-// DASHBOARD MENSAL
 function atualizarDashboardMensal() {
   const lanc = lerLancamentos();
   const mesAno = getMesSelecionado();
@@ -119,10 +93,30 @@ function atualizarDashboardMensal() {
       };
     }
   }
+
+  // Barras
+  const barReceita = document.getElementById("barReceita");
+  const barDespesas = document.getElementById("barDespesas");
+  if (barReceita && barDespesas) {
+    const ALTURA_MAX = 260;
+    const ALTURA_MIN = 18;
+    const ALTURA_ZERO = 8;
+
+    const maior = Math.max(totalR, totalD, 1);
+
+    const hR = totalR > 0 ? Math.max(ALTURA_MIN, Math.round((totalR / maior) * ALTURA_MAX)) : ALTURA_ZERO;
+    const hD = totalD > 0 ? Math.max(ALTURA_MIN, Math.round((totalD / maior) * ALTURA_MAX)) : ALTURA_ZERO;
+
+    barReceita.style.height = `${hR}px`;
+    barDespesas.style.height = `${hD}px`;
+
+    barReceita.title = `Receitas do mês: ${formatarBRL(totalR)}`;
+    barDespesas.title = `Despesas do mês: ${formatarBRL(totalD)}`;
+  }
 }
 
+// ÚLTIMOS LANÇAMENTOS (3)
 
-// ÚLTIMOS LANÇAMENTOS
 function renderUltimos() {
   const ultimosEl = document.getElementById("ultimosLancamentos");
   const msgUltimos = document.getElementById("msgUltimos");
@@ -160,7 +154,7 @@ function renderUltimos() {
   });
 }
 
-// ALERTAS
+// ALERTAS (SINO + MODAL)
 function calcularAlertas() {
   const hoje = hojeISO();
   const lanc = lerLancamentos();
@@ -257,7 +251,9 @@ document.addEventListener("click", (e) => {
   renderGraficoLinha();
 });
 
+// ========================
 // SAIR
+// ========================
 function configurarSair() {
   const btnSair = document.getElementById("btnSair");
   if (!btnSair) return;
@@ -268,74 +264,62 @@ function configurarSair() {
   });
 }
 
-// GRÁFICO PRINCIPAL
-function renderGraficoResumo() {
-  const canvas = document.getElementById("graficoResumo");
-  const seletor = document.getElementById("tipoGrafico");
-  if (!canvas || !seletor || !window.Chart) return;
+// MODO ESCURO (1 ÚNICO BLOCO)
 
-  const tipo = seletor.value;
-  const lanc = lerLancamentos();
-  const mesAno = getMesSelecionado();
+function configurarTema() {
+  const btnTema = document.getElementById("btnTema");
 
-  const totalR = somarMes(lanc, "receita", mesAno);
-  const totalD = somarMes(lanc, "despesa", mesAno);
+  const tema = localStorage.getItem("tema") || "light";
+  document.body.classList.toggle("dark", tema === "dark");
+  if (btnTema) btnTema.textContent = (tema === "dark") ? "☀" : "🌙";
 
-  const temaEscuro = document.body.classList.contains("dark");
-  const corTexto = temaEscuro ? "#f1f1f1" : "#1b1b1b";
-  const corGrade = temaEscuro ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)";
+  if (!btnTema) return;
 
-  if (graficoResumo) graficoResumo.destroy();
-
-  graficoResumo = new Chart(canvas, {
-    type: tipo,
-    data: {
-      labels: ["Receitas", "Despesas"],
-      datasets: [{
-        label: "Valores",
-        data: [totalR, totalD],
-        backgroundColor: ["#4f7cff", "#e53935"],
-        borderColor: ["#4f7cff", "#e53935"],
-        borderWidth: 1,
-        tension: 0.3
-      }]
-    },
-    options: {
-      responsive: true,
-      maintainAspectRatio: false,
-      plugins: {
-        legend: {
-          position: "bottom",
-          labels: { color: corTexto }
-        },
-        tooltip: {
-          callbacks: {
-            label: (context) => `${context.label}: ${formatarBRL(context.raw)}`
-          }
-        }
-      },
-      scales: (tipo === "bar" || tipo === "line")
-        ? {
-            y: {
-              beginAtZero: true,
-              ticks: {
-                color: corTexto,
-                callback: (value) => formatarBRL(value)
-              },
-              grid: { color: corGrade }
-            },
-            x: {
-              ticks: { color: corTexto },
-              grid: { color: corGrade }
-            }
-          }
-        : {}
-    }
+  btnTema.addEventListener("click", () => {
+    const darkAtivo = document.body.classList.toggle("dark");
+    localStorage.setItem("tema", darkAtivo ? "dark" : "light");
+    btnTema.textContent = darkAtivo ? "☀" : "🌙";
   });
 }
 
 
-// GRÁFICO MISTO
+document.addEventListener("DOMContentLoaded", () => {
+  preencherNomeTopo();
+  configurarSair();
+  configurarTema();
+
+  atualizarDashboardMensal();
+  renderUltimos();
+  atualizarSino();
+
+  // abre modal automaticamente se tiver alerta
+  const badge = document.getElementById("badgeAlertas");
+  if (badge && !badge.classList.contains("d-none")) {
+    const modalEl = document.getElementById("modalAlertas");
+    if (modalEl && window.bootstrap) {
+      new bootstrap.Modal(modalEl).show();
+    }
+  }
+});
+
+// GRÁFICO DE LINHA (Saldo diário - últimos 30 dias)
+
+let chartLinha = null;
+
+function lerLancamentos() {
+  try { return JSON.parse(localStorage.getItem("lancamentos")) || []; }
+  catch { return []; }
+}
+
+function formatarBRL(valor) {
+  return Number(valor || 0).toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+}
+
+function hojeISO() {
+  return new Date().toISOString().split("T")[0];
+}
+
+// gera array de datas ISO dos últimos N dias (inclui hoje)
 function ultimosDiasISO(qtd) {
   const arr = [];
   const base = new Date();
@@ -349,19 +333,33 @@ function ultimosDiasISO(qtd) {
   return arr;
 }
 
-let graficoLinha = null;
+function montarSerieSaldoDiario(lancamentos, dias = 30) {
+  const datas = ultimosDiasISO(dias);
 
-function ultimosDiasISO(qtd) {
-  const arr = [];
-  const base = new Date();
-  base.setHours(0, 0, 0, 0);
+  // soma (receita/despesa) por dia
+  const mapa = new Map();
+  datas.forEach(dt => mapa.set(dt, 0));
 
-  for (let i = qtd - 1; i >= 0; i--) {
-    const d = new Date(base);
-    d.setDate(base.getDate() - i);
-    arr.push(d.toISOString().split("T")[0]);
-  }
-  return arr;
+  lancamentos.forEach(l => {
+    const dt = (l.data || "").trim();
+    if (!mapa.has(dt)) return;
+
+    const v = Number(l.valor || 0);
+    if (!Number.isFinite(v)) return;
+
+    // receita soma, despesa subtrai
+    const delta = (l.tipo === "receita") ? v : (l.tipo === "despesa" ? -v : 0);
+    mapa.set(dt, mapa.get(dt) + delta);
+  });
+
+  // saldo acumulado
+  let saldo = 0;
+  const valores = datas.map(dt => {
+    saldo += mapa.get(dt);
+    return Number(saldo.toFixed(2));
+  });
+
+  return { labels: datas, valores };
 }
 
 function renderGraficoLinha() {
@@ -398,39 +396,19 @@ function renderGraficoLinha() {
     info.textContent = `Saldo atual no período: ${formatarBRL(ultimo)}`;
   }
 
-  const temaEscuro = document.body.classList.contains("dark");
-  const corTexto = temaEscuro ? "#f1f1f1" : "#1b1b1b";
-  const corGrade = temaEscuro ? "rgba(255,255,255,0.15)" : "rgba(0,0,0,0.08)";
+  // se já existir, destrói para recriar
+  if (chartPizza) chartPizza.destroy();
 
-  if (graficoLinha) {
-    graficoLinha.destroy();
-  }
-
-  graficoLinha = new Chart(canvas, {
+  chartPizza = new Chart(canvas, {
+    type: "line",
     data: {
-      labels: datas,
-      datasets: [
-        {
-          type: "bar",
-          label: "Movimentação diária",
-          data: movimentacao,
-          backgroundColor: movimentacao.map(v => v >= 0 ? "#4f7cff" : "#e53935"),
-          borderWidth: 0,
-          yAxisID: "y1"
-        },
-        {
-          type: "line",
-          label: "Saldo acumulado",
-          data: saldoAcumulado,
-          borderColor: "#6f42c1",
-          backgroundColor: "rgba(111,66,193,0.12)",
-          fill: true,
-          tension: 0.3,
-          pointRadius: 3,
-          pointBackgroundColor: "#6f42c1",
-          yAxisID: "y"
-        }
-      ]
+      labels,
+      datasets: [{
+        label: "Saldo acumulado",
+        data: valores,
+        tension: 0.25,
+        pointRadius: 2
+      }]
     },
     options: {
       responsive: true,
@@ -440,11 +418,7 @@ function renderGraficoLinha() {
         intersect: false
       },
       plugins: {
-        legend: {
-          labels: {
-            color: corTexto
-          }
-        },
+        legend: { display: true },
         tooltip: {
           callbacks: {
             label: (ctx) => `${ctx.dataset.label}: ${formatarBRL(ctx.raw)}`
@@ -454,11 +428,8 @@ function renderGraficoLinha() {
       scales: {
         x: {
           ticks: {
-            color: corTexto,
+            // mostra menos datas para não poluir
             maxTicksLimit: 8
-          },
-          grid: {
-            color: corGrade
           }
         },
         y: {
@@ -481,14 +452,6 @@ function renderGraficoLinha() {
           ticks: {
             color: corTexto,
             callback: (v) => formatarBRL(v)
-          },
-          grid: {
-            drawOnChartArea: false
-          },
-          title: {
-            display: true,
-            text: "Movimentação diária",
-            color: corTexto
           }
         }
       }
@@ -496,49 +459,8 @@ function renderGraficoLinha() {
   });
 }
 
-// INIT
-document.addEventListener("DOMContentLoaded", () => {
-  preencherNomeTopo();
-  configurarSair();
-  configurarTema();
+// desenha quando abrir a página
+document.addEventListener("DOMContentLoaded", renderGraficoPizza);
 
-  const inputMes = document.getElementById("mesAno");
-  if (inputMes) inputMes.value = getMesAnoAtual();
-
-  exibirMesSelecionado();
-  atualizarDashboardMensal();
-  renderUltimos();
-  atualizarSino();
-  renderGraficoResumo();
-  renderGraficoLinha();
-
-  const seletor = document.getElementById("tipoGrafico");
-  if (seletor) {
-    seletor.addEventListener("change", renderGraficoResumo);
-  }
-
-  const btnSelecionar = document.getElementById("btnSelecionar");
-  if (btnSelecionar) {
-    btnSelecionar.addEventListener("click", () => {
-      exibirMesSelecionado();
-      atualizarDashboardMensal();
-      renderGraficoResumo();
-    });
-  }
-
-  const badge = document.getElementById("badgeAlertas");
-  if (badge && !badge.classList.contains("d-none")) {
-    const modalEl = document.getElementById("modalAlertas");
-    if (modalEl && window.bootstrap) {
-      new bootstrap.Modal(modalEl).show();
-    }
-  }
-});
-
-window.addEventListener("pageshow", () => {
-  atualizarDashboardMensal();
-  renderUltimos();
-  atualizarSino();
-  renderGraficoResumo();
-  renderGraficoLinha();
-});
+// se você salvar receita/despesa e voltar pro dashboard, atualiza:
+window.addEventListener("pageshow", renderGraficoPizza);
