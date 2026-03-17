@@ -2,10 +2,10 @@ const MODO_TESTE = true;
 
 let graficoResumo = null;
 let graficoLinha = null;
+let mesSelecionado = getMesAnoAtual();
 
-// ========================
 // HELPERS
-// ========================
+
 function lerLancamentos() {
   try {
     return JSON.parse(localStorage.getItem("lancamentos")) || [];
@@ -50,9 +50,21 @@ function somarMes(lista, tipo, mesAno) {
     .reduce((acc, l) => acc + Number(l.valor || 0), 0);
 }
 
-// ========================
+function diasDoMesSelecionado(mesAno) {
+  const [ano, mes] = mesAno.split("-").map(Number);
+  const ultimoDia = new Date(ano, mes, 0).getDate();
+
+  const datas = [];
+  for (let dia = 1; dia <= ultimoDia; dia++) {
+    const data = `${ano}-${String(mes).padStart(2, "0")}-${String(dia).padStart(2, "0")}`;
+    datas.push(data);
+  }
+
+  return datas;
+}
+
 // LOGIN
-// ========================
+
 const usuario = localStorage.getItem("usuarioLogado");
 if (!MODO_TESTE && !usuario) {
   window.location.href = "login.html";
@@ -63,12 +75,10 @@ function preencherNomeTopo() {
   if (el) el.textContent = usuario || "Visitante";
 }
 
-// ========================
 // DASHBOARD MENSAL
-// ========================
 function atualizarDashboardMensal() {
   const lanc = lerLancamentos();
-  const mesAno = getMesAnoAtual();
+  const mesAno = mesSelecionado;
 
   const totalR = somarMes(lanc, "receita", mesAno);
   const totalD = somarMes(lanc, "despesa", mesAno);
@@ -76,8 +86,8 @@ function atualizarDashboardMensal() {
 
   const mesAtualLabel = document.getElementById("mesAtualLabel");
   if (mesAtualLabel) {
-    const hoje = new Date();
-    mesAtualLabel.textContent = `Mês atual: ${nomeMesPt(hoje.getMonth())} / ${hoje.getFullYear()}`;
+    const [ano, mes] = mesAno.split("-");
+    mesAtualLabel.textContent = `Mês selecionado: ${nomeMesPt(Number(mes) - 1)} / ${ano}`;
   }
 
   const elTotalR = document.getElementById("totalReceitaMes");
@@ -106,49 +116,7 @@ function atualizarDashboardMensal() {
   }
 }
 
-// ========================
-// ÚLTIMOS LANÇAMENTOS
-// ========================
-function renderUltimos() {
-  const ultimosEl = document.getElementById("ultimosLancamentos");
-  const msgUltimos = document.getElementById("msgUltimos");
-  if (!ultimosEl) return;
-
-  const lista = lerLancamentos();
-  ultimosEl.innerHTML = "";
-
-  if (!lista.length) {
-    if (msgUltimos) msgUltimos.textContent = "Sem lançamentos ainda. Vá em Receita ou Despesa.";
-    return;
-  }
-
-  if (msgUltimos) msgUltimos.textContent = "";
-
-  const ultimos = [...lista].slice(-3).reverse();
-
-  ultimos.forEach(l => {
-    const tipoTxt = l.tipo === "receita" ? "Receita" : "Despesa";
-    const sinal = l.tipo === "receita" ? "+" : "-";
-    const cor = l.tipo === "receita" ? "text-primary" : "text-danger";
-
-    const item = document.createElement("div");
-    item.className = "list-group-item d-flex justify-content-between align-items-center";
-
-    item.innerHTML = `
-      <div>
-        <div class="fw-semibold">${l.descricao || "(Sem descrição)"}</div>
-        <div class="small text-muted">${tipoTxt} • ${l.data || "-"}</div>
-      </div>
-      <div class="fw-bold ${cor}">${sinal} ${formatarBRL(Number(l.valor || 0))}</div>
-    `;
-
-    ultimosEl.appendChild(item);
-  });
-}
-
-// ========================
 // ALERTAS
-// ========================
 function calcularAlertas() {
   const hoje = hojeISO();
   const lanc = lerLancamentos();
@@ -240,14 +208,11 @@ document.addEventListener("click", (e) => {
   marcarComoPago(btn.dataset.pagar);
   atualizarSino();
   atualizarDashboardMensal();
-  renderUltimos();
   renderGraficoResumo();
   renderGraficoLinha();
 });
 
-// ========================
 // SAIR
-// ========================
 function configurarSair() {
   const btnSair = document.getElementById("btnSair");
   if (!btnSair) return;
@@ -258,9 +223,7 @@ function configurarSair() {
   });
 }
 
-// ========================
 // GRÁFICO PRINCIPAL
-// ========================
 function renderGraficoResumo() {
   const canvas = document.getElementById("graficoResumo");
   const seletor = document.getElementById("tipoGrafico");
@@ -268,7 +231,7 @@ function renderGraficoResumo() {
 
   const tipo = seletor.value;
   const lanc = lerLancamentos();
-  const mesAno = getMesAnoAtual();
+  const mesAno = mesSelecionado;
 
   const totalR = somarMes(lanc, "receita", mesAno);
   const totalD = somarMes(lanc, "despesa", mesAno);
@@ -324,58 +287,40 @@ function renderGraficoResumo() {
   });
 }
 
-// ========================
-// GRÁFICO DE LINHA
-// ========================
-function ultimosDiasISO(qtd) {
-  const arr = [];
-  const base = new Date();
-  base.setHours(0, 0, 0, 0);
-
-  for (let i = qtd - 1; i >= 0; i--) {
-    const d = new Date(base);
-    d.setDate(base.getDate() - i);
-    arr.push(d.toISOString().split("T")[0]);
-  }
-  return arr;
-}
-
-function montarSerieSaldoDiario(lancamentos, dias = 30) {
-  const datas = ultimosDiasISO(dias);
-  const mapa = new Map();
-  datas.forEach(dt => mapa.set(dt, 0));
-
-  lancamentos.forEach(l => {
-    const dt = (l.data || "").trim();
-    if (!mapa.has(dt)) return;
-
-    const v = Number(l.valor || 0);
-    if (!Number.isFinite(v)) return;
-
-    const delta = l.tipo === "receita" ? v : l.tipo === "despesa" ? -v : 0;
-    mapa.set(dt, mapa.get(dt) + delta);
-  });
-
-  let saldo = 0;
-  const valores = datas.map(dt => {
-    saldo += mapa.get(dt);
-    return Number(saldo.toFixed(2));
-  });
-
-  return { labels: datas, valores };
-}
-
+// GRÁFICO MISTO DO MÊS
 function renderGraficoLinha() {
   const canvas = document.getElementById("graficoLinha");
   if (!canvas || !window.Chart) return;
 
   const lanc = lerLancamentos();
-  const { labels, valores } = montarSerieSaldoDiario(lanc, 30);
+  const datas = diasDoMesSelecionado(mesSelecionado);
+
+  let saldo = 0;
+  const movimentacao = [];
+  const saldoAcumulado = [];
+
+  datas.forEach((data) => {
+    let totalDia = 0;
+
+    lanc.forEach((l) => {
+      if ((l.data || "").trim() !== data) return;
+
+      const valor = Number(l.valor || 0);
+
+      if (l.tipo === "receita") totalDia += valor;
+      if (l.tipo === "despesa") totalDia -= valor;
+    });
+
+    saldo += totalDia;
+    movimentacao.push(Number(totalDia.toFixed(2)));
+    saldoAcumulado.push(Number(saldo.toFixed(2)));
+  });
 
   const info = document.getElementById("linhaInfo");
   if (info) {
-    const ultimo = valores[valores.length - 1] || 0;
-    info.textContent = `Saldo atual no período: ${formatarBRL(ultimo)}`;
+    const [ano, mes] = mesSelecionado.split("-");
+    const ultimo = saldoAcumulado[saldoAcumulado.length - 1] || 0;
+    info.textContent = `${nomeMesPt(Number(mes) - 1)} / ${ano} • Saldo do período: ${formatarBRL(ultimo)}`;
   }
 
   const temaEscuro = document.body.classList.contains("dark");
@@ -385,58 +330,94 @@ function renderGraficoLinha() {
   if (graficoLinha) graficoLinha.destroy();
 
   graficoLinha = new Chart(canvas, {
-    type: "line",
     data: {
-      labels,
-      datasets: [{
-        label: "Saldo acumulado",
-        data: valores,
-        borderColor: "#4f7cff",
-        backgroundColor: "rgba(79,124,255,0.15)",
-        fill: true,
-        tension: 0.25,
-        pointRadius: 2
-      }]
+      labels: datas.map(d => d.slice(8)),
+      datasets: [
+        {
+          type: "bar",
+          label: "Movimentação diária",
+          data: movimentacao,
+          backgroundColor: movimentacao.map(v => v >= 0 ? "#4f7cff" : "#e53935"),
+          yAxisID: "y1"
+        },
+        {
+          type: "line",
+          label: "Saldo acumulado",
+          data: saldoAcumulado,
+          borderColor: "#6f42c1",
+          backgroundColor: "rgba(111,66,193,0.12)",
+          fill: true,
+          tension: 0.3,
+          pointRadius: 3,
+          pointBackgroundColor: "#6f42c1",
+          yAxisID: "y"
+        }
+      ]
     },
     options: {
       responsive: true,
       maintainAspectRatio: false,
+      interaction: {
+        mode: "index",
+        intersect: false
+      },
       plugins: {
         legend: {
           labels: { color: corTexto }
         },
         tooltip: {
           callbacks: {
-            label: (ctx) => ` ${formatarBRL(ctx.parsed.y)}`
+            label: (ctx) => `${ctx.dataset.label}: ${formatarBRL(ctx.raw)}`
           }
         }
       },
       scales: {
         x: {
-          ticks: { color: corTexto, maxTicksLimit: 8 },
+          ticks: {
+            color: corTexto,
+            maxTicksLimit: 10
+          },
           grid: { color: corGrade }
         },
         y: {
+          position: "left",
           ticks: {
             color: corTexto,
             callback: (v) => formatarBRL(v)
           },
-          grid: { color: corGrade }
+          grid: { color: corGrade },
+          title: {
+            display: true,
+            text: "Saldo acumulado",
+            color: corTexto
+          }
+        },
+        y1: {
+          position: "right",
+          ticks: {
+            color: corTexto,
+            callback: (v) => formatarBRL(v)
+          },
+          grid: {
+            drawOnChartArea: false
+          },
+          title: {
+            display: true,
+            text: "Movimentação diária",
+            color: corTexto
+          }
         }
       }
     }
   });
 }
 
-// ========================
 // INIT
-// ========================
 document.addEventListener("DOMContentLoaded", () => {
   preencherNomeTopo();
   configurarSair();
 
   atualizarDashboardMensal();
-  renderUltimos();
   atualizarSino();
   renderGraficoResumo();
   renderGraficoLinha();
@@ -444,6 +425,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const seletor = document.getElementById("tipoGrafico");
   if (seletor) {
     seletor.addEventListener("change", renderGraficoResumo);
+  }
+
+  const filtroMes = document.getElementById("filtroMes");
+  if (filtroMes) {
+    filtroMes.value = mesSelecionado;
+
+    filtroMes.addEventListener("change", () => {
+      mesSelecionado = filtroMes.value;
+      atualizarDashboardMensal();
+      renderGraficoResumo();
+      renderGraficoLinha();
+    });
   }
 
   const badge = document.getElementById("badgeAlertas");
@@ -457,7 +450,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
 window.addEventListener("pageshow", () => {
   atualizarDashboardMensal();
-  renderUltimos();
   atualizarSino();
   renderGraficoResumo();
   renderGraficoLinha();

@@ -69,12 +69,6 @@
               <a class="btn btn-outline-secondary" href="extrato.html">📄 Extrato</a>
               <button class="btn btn-warning" id="btnSair" type="button">Sair</button>
             </div>
-
-            <hr class="my-3">
-
-            <h6 class="mb-2">Últimos lançamentos</h6>
-            <div class="list-group" id="ultimosLancamentos"></div>
-            <p class="text-muted small mt-2 mb-0" id="msgUltimos"></p>
           </div>
         </div>
       </div>
@@ -92,7 +86,11 @@
               </select>
             </div>
 
-            <p class="text-muted small mb-3" id="mesAtualLabel"></p>
+           <div class="d-flex justify-content-center gap-2 align-items-center m-3 flex-wrap">
+            <label for="filtroMes" class="small text-muted">Mês:</label>
+            <input type="month" id="filtroMes" class="form-control w-auto">
+           </div>
+           <p class="text-muted small mb-3" id="mesAtualLabel"></p>
 
             <div class="d-flex justify-content-center gap-3 flex-wrap mb-3">
               <span class="badge text-bg-primary" id="totalReceitaMes">Receitas: R$ 0,00</span>
@@ -111,7 +109,7 @@
         <div class="card shadow-sm">
           <div class="card-body">
             <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
-              <h5 class="card-title mb-0">Evolução do saldo (últimos 30 dias)</h5>
+              <h5 class="card-title mb-0">Evolução do saldo no mês</h5>
               <span class="text-muted small" id="linhaInfo"></span>
             </div>
 
@@ -154,13 +152,6 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <script src="tema.js"></script>
   <script src="script.js"></script>
-  <div class="tema-switch" title="Alternar tema">
-  <input type="checkbox" id="temaToggle" class="tema-switch__input" aria-label="Alternar tema">
-  <label for="temaToggle" class="tema-switch__label">
-    <span>☀</span>
-    <span>🌙</span>
-    <span class="tema-switch__thumb" aria-hidden="true"></span>
-  </label>
-</div>
+  
 </body>
 </html>
