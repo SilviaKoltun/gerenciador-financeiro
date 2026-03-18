@@ -20,6 +20,7 @@
       <div class="plus">+</div>
       <p class="small text-muted mb-0">Cadastro / Perfil</p>
     </div>
+
     <div class="tema-switch">
       <input type="checkbox" id="temaToggle" class="tema-switch__input">
       <label for="temaToggle" class="tema-switch__label">
@@ -48,12 +49,13 @@
 
       <div class="mb-3">
         <label class="form-label">Criar Senha</label>
-        <input type="Sen" id="Senha" class="form-control bg-box" placeholder="Senha" >
+        <input type="password" id="senha" class="form-control bg-box" placeholder="Senha">
+        <small class="text-muted">A senha deve ter pelo menos 6 caracteres e 1 número.</small>
       </div>
 
       <div class="mb-3">
         <label class="form-label">Confirmar Senha</label>
-        <input type="Conf" id="confirmar Senha" class="form-control bg-box" placeholder="Senha">
+        <input type="password" id="confirmarSenha" class="form-control bg-box" placeholder="Confirmar senha">
       </div>
 
       <div class="d-grid mb-3">
@@ -76,6 +78,7 @@
   </div>
 
 </main>
+
 <script src="tema.js"></script>
 <script src="perfil.js"></script>
 </body>

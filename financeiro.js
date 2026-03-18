@@ -11,8 +11,11 @@ const btnLimparTudo = document.getElementById("btnLimparTudo");
 
 // ===== Storage =====
 function lerLancamentos() {
-  try { return JSON.parse(localStorage.getItem("lancamentos")) || []; }
-  catch { return []; }
+  try {
+    return JSON.parse(localStorage.getItem("lancamentos")) || [];
+  } catch {
+    return [];
+  }
 }
 
 function salvarLancamentos(lista) {
@@ -21,7 +24,10 @@ function salvarLancamentos(lista) {
 
 // ===== Helpers =====
 function formatarBRL(valor) {
-  return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+  return Number(valor || 0).toLocaleString("pt-BR", {
+    style: "currency",
+    currency: "BRL"
+  });
 }
 
 function somar(lista, tipo) {
@@ -54,7 +60,7 @@ function renderLista(lista) {
   msg.textContent = "";
   contadorLanc.textContent = String(lista.length);
 
-  // últimos primeiro (mais recente no topo)
+  // últimos primeiro
   const ordenada = [...lista].reverse();
 
   ordenada.forEach((lanc, indexReverso) => {
@@ -67,18 +73,18 @@ function renderLista(lista) {
     // índice real no array original
     const indexReal = lista.length - 1 - indexReverso;
 
-    // categoria
     const cat = lanc.categoria ? ` • ${lanc.categoria}` : "";
 
-    // forma (receita = recebimento | despesa = pagamento)
     const forma = ehReceita
       ? (lanc.recebimento ? ` • ${lanc.recebimento}` : "")
       : (lanc.pagamento ? ` • ${lanc.pagamento}` : "");
 
-    // vencimento só pra despesa
     const venc = !ehReceita && lanc.vencimento ? ` • Venc: ${lanc.vencimento}` : "";
 
-    // status (Recebido/Pendente) ou (Pago/Em aberto)
+    const dataRecebimento = ehReceita && lanc.dataRecebimento
+      ? ` • Recebido em: ${lanc.dataRecebimento}`
+      : "";
+
     let status = "";
     if (ehReceita) {
       if (typeof lanc.recebido === "boolean") {
@@ -94,6 +100,10 @@ function renderLista(lista) {
       }
     }
 
+    const linkEdicao = ehReceita
+      ? `receita.html?editar=${indexReal}`
+      : `despesa.html?editar=${indexReal}`;
+
     const item = document.createElement("div");
     item.className = "list-group-item d-flex justify-content-between align-items-center gap-3";
 
@@ -103,15 +113,22 @@ function renderLista(lista) {
           ${lanc.descricao || "(Sem descrição)"}${status}
         </div>
         <div class="small text-muted">
-          ${tipoTxt}${cat}${forma} • ${lanc.data || "-"}${venc}
+          ${tipoTxt}${cat}${forma} • ${lanc.data || "-"}${venc}${dataRecebimento}
         </div>
       </div>
 
-      <div class="d-flex align-items-center gap-3">
+      <div class="d-flex align-items-center gap-2 flex-wrap justify-content-end">
         <div class="lanc-valor ${classeValor}">
           ${sinal} ${formatarBRL(Number(lanc.valor || 0))}
         </div>
-        <button class="btn btn-sm btn-outline-danger" data-del="${indexReal}" title="Excluir">🗑</button>
+
+        <a class="btn btn-sm btn-outline-primary" href="${linkEdicao}" title="Editar">
+          ✏️
+        </a>
+
+        <button class="btn btn-sm btn-outline-danger" data-del="${indexReal}" title="Excluir">
+          🗑
+        </button>
       </div>
     `;
 
@@ -123,7 +140,12 @@ function renderLista(lista) {
 function aplicarBusca(lista, texto) {
   const t = texto.trim().toLowerCase();
   if (!t) return lista;
-  return lista.filter(l => (l.descricao || "").toLowerCase().includes(t));
+
+  return lista.filter(l => {
+    const descricao = (l.descricao || "").toLowerCase();
+    const categoria = (l.categoria || "").toLowerCase();
+    return descricao.includes(t) || categoria.includes(t);
+  });
 }
 
 // ===== Init =====
@@ -152,7 +174,7 @@ listaEl.addEventListener("click", (e) => {
   renderLista(aplicarBusca(lancamentos, campoBusca.value));
 });
 
-// limpar tudo (teste)
+// limpar tudo
 btnLimparTudo.addEventListener("click", () => {
   const ok = confirm("Tem certeza que deseja apagar TODOS os lançamentos?");
   if (!ok) return;

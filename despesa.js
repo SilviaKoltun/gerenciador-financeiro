@@ -8,6 +8,11 @@ const vencimento = document.getElementById("vencimento");
 const pago = document.getElementById("pago");
 const msg = document.getElementById("msg");
 const btnLimpar = document.getElementById("btnLimpar");
+const btnSalvar = document.getElementById("btnSalvar");
+const tituloPagina = document.getElementById("tituloPagina");
+
+const params = new URLSearchParams(window.location.search);
+const indiceEdicao = params.get("editar"); // ex: despesa.html?editar=3
 
 function hojeISO() {
   const d = new Date();
@@ -15,8 +20,6 @@ function hojeISO() {
   const dia = String(d.getDate()).padStart(2, "0");
   return `${d.getFullYear()}-${m}-${dia}`;
 }
-
-data.value = hojeISO();
 
 function lerLancamentos() {
   try {
@@ -29,6 +32,41 @@ function lerLancamentos() {
 function salvarLancamentos(lista) {
   localStorage.setItem("lancamentos", JSON.stringify(lista));
 }
+
+function limparFormulario() {
+  form.reset();
+  data.value = hojeISO();
+  vencimento.value = "";
+  msg.textContent = "";
+  descricao.focus();
+}
+
+function preencherModoEdicao() {
+  if (indiceEdicao === null) return;
+
+  const lancamentos = lerLancamentos();
+  const lanc = lancamentos[Number(indiceEdicao)];
+
+  if (!lanc || lanc.tipo !== "despesa") {
+    msg.textContent = "Despesa para edição não encontrada.";
+    msg.className = "small text-center mt-3 mb-0 text-danger";
+    return;
+  }
+
+  tituloPagina.textContent = "EDITAR DESPESA";
+  btnSalvar.textContent = "Atualizar";
+
+  descricao.value = lanc.descricao || "";
+  valor.value = lanc.valor || "";
+  categoria.value = lanc.categoria || "";
+  pagamento.value = lanc.pagamento || "";
+  data.value = lanc.data || hojeISO();
+  vencimento.value = lanc.vencimento || "";
+  pago.checked = !!lanc.pago;
+}
+
+data.value = hojeISO();
+preencherModoEdicao();
 
 form.addEventListener("submit", (e) => {
   e.preventDefault();
@@ -49,7 +87,7 @@ form.addEventListener("submit", (e) => {
 
   const lancamentos = lerLancamentos();
 
-  lancamentos.push({
+  const objetoDespesa = {
     tipo: "despesa",
     descricao: desc,
     valor: v,
@@ -58,21 +96,40 @@ form.addEventListener("submit", (e) => {
     data: dt,
     vencimento: venc || "",
     pago: foiPago
-  });
+  };
 
+  if (indiceEdicao !== null) {
+    const idx = Number(indiceEdicao);
+
+    if (!lancamentos[idx] || lancamentos[idx].tipo !== "despesa") {
+      msg.textContent = "Não foi possível atualizar a despesa.";
+      msg.className = "small text-center mt-3 mb-0 text-danger";
+      return;
+    }
+
+    lancamentos[idx] = objetoDespesa;
+
+    salvarLancamentos(lancamentos);
+
+    msg.textContent = "Despesa atualizada com sucesso! ✅";
+    msg.className = "small text-center mt-3 mb-0 text-success";
+
+    setTimeout(() => {
+      window.location.href = "financeiro.html";
+    }, 1000);
+
+    return;
+  }
+
+  lancamentos.push(objetoDespesa);
   salvarLancamentos(lancamentos);
 
   msg.textContent = "Despesa salva com sucesso! ✅";
   msg.className = "small text-center mt-3 mb-0 text-success";
 
-  form.reset();
-  data.value = hojeISO();
-  descricao.focus();
+  limparFormulario();
 });
 
 btnLimpar.addEventListener("click", () => {
-  form.reset();
-  data.value = hojeISO();
-  msg.textContent = "";
-  descricao.focus();
+  limparFormulario();
 });
