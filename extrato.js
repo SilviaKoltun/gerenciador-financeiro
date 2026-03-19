@@ -15,7 +15,6 @@ const fAte = document.getElementById("fAte");
 const btnLimparFiltros = document.getElementById("btnLimparFiltros");
 const btnLimparTudo = document.getElementById("btnLimparTudo");
 
-// storage
 function lerLancamentos() {
   try { return JSON.parse(localStorage.getItem("lancamentos")) || []; }
   catch { return []; }
@@ -147,13 +146,16 @@ function renderLista(listaFiltrada, listaOriginal) {
 
 // init
 let lancamentos = lerLancamentos();
-renderResumo(lancamentos);
-renderLista(aplicarFiltros(lancamentos), lancamentos);
+let lancamentosFiltrados = aplicarFiltros(lancamentos);
+renderResumo(lancamentosFiltrados);
+renderLista(lancamentosFiltrados, lancamentos);
 
 // eventos de filtro
 [fBusca, fTipo, fDe, fAte].forEach(el => {
   el.addEventListener("input", () => {
-    renderLista(aplicarFiltros(lancamentos), lancamentos);
+    let lancamentosAtualizados = aplicarFiltros(lancamentos);
+    renderResumo(lancamentosAtualizados);  
+    renderLista(lancamentosAtualizados, lancamentos);
   });
 });
 
@@ -168,8 +170,9 @@ listaEl.addEventListener("click", (e) => {
   lancamentos.splice(idx, 1);
   salvarLancamentos(lancamentos);
 
-  renderResumo(lancamentos);
-  renderLista(aplicarFiltros(lancamentos), lancamentos);
+  let lancamentosAtualizados = aplicarFiltros(lancamentos);
+  renderResumo(lancamentosAtualizados);  
+  renderLista(lancamentosAtualizados, lancamentos);
 });
 
 // limpar filtros
@@ -178,7 +181,9 @@ btnLimparFiltros.addEventListener("click", () => {
   fTipo.value = "todos";
   fDe.value = "";
   fAte.value = "";
-  renderLista(aplicarFiltros(lancamentos), lancamentos);
+  let lancamentosAtualizados = aplicarFiltros(lancamentos);
+  renderResumo(lancamentosAtualizados);  
+  renderLista(lancamentosAtualizados, lancamentos);
 });
 
 // limpar tudo (teste)

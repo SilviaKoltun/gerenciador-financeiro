@@ -4,41 +4,45 @@ const inputSenha = document.getElementById("senha");
 const msg = document.getElementById("msg");
 
 function validarEmail(email) {
-  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  return regex.test(email);
+const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+return regex.test(email);
 }
 
 form.addEventListener("submit", (e) => {
-  e.preventDefault();
+e.preventDefault();
 
-  const login = inputLogin.value.trim();
-  const senha = inputSenha.value.trim();
+const login = inputLogin.value.trim();
+const senha = inputSenha.value.trim();
 
-  msg.textContent = "";
+msg.textContent = "";
 
-  if (!login || !senha) {
-    msg.textContent = "Preencha login e senha.";
-    return;
-  }
+// verificar campos vazios
+if (!login || !senha) {
+msg.textContent = "Preencha login e senha.";
+return;
+}
 
-  if (!validarEmail(login)) {
-    msg.textContent = "Digite um e-mail válido.";
-    return;
-  }
+// validar email
+if (!validarEmail(login)) {
+msg.textContent = "Digite um e-mail válido.";
+return;
+}
 
-  const emailSalvo = localStorage.getItem("perfil_email");
-  const senhaSalva = localStorage.getItem("perfil_senha");
+// senha mínima
+if (senha.length < 6) {
+msg.textContent = "A senha deve ter pelo menos 6 caracteres.";
+return;
+}
 
-  if (!emailSalvo || !senhaSalva) {
-    msg.textContent = "Nenhum cadastro encontrado. Faça seu cadastro primeiro.";
-    return;
-  }
+// senha precisa ter número
+if (!/\d/.test(senha)) {
+msg.textContent = "A senha deve conter pelo menos 1 número.";
+return;
+}
 
-  if (login !== emailSalvo || senha !== senhaSalva) {
-    msg.textContent = "E-mail ou senha inválidos.";
-    return;
-  }
+// salvar usuário logado
+localStorage.setItem("usuarioLogado", login);
 
-  localStorage.setItem("usuarioLogado", login);
-  window.location.href = "index.html";
+// ir para dashboard
+window.location.href = "index.html";
 });

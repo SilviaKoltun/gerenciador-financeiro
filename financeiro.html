@@ -65,6 +65,7 @@
         <a class="btn btn-primary" href="receita.html">➕ Lançar Receita</a>
         <a class="btn btn-danger" href="despesa.html">➖ Lançar Despesa</a>
         <a class="btn btn-outline-secondary" href="extrato.html">📄 Extrato</a>
+        <a class="btn btn-outline-dark" href="recorrencias.html">Gerenciar recorrências</a>
 
         <div class="ms-auto d-flex gap-2 flex-wrap">
           <button class="btn btn-outline-secondary" id="btnLimparTudo" type="button">
@@ -77,6 +78,7 @@
       </p>
     </div>
   </div>
+  
 
   <!-- Busca -->
   <div class="input-group mb-3">
@@ -97,6 +99,13 @@
       <p id="msg" class="small text-center mt-3 mb-0 text-muted"></p>
     </div>
   </div>
+  <div class="card shadow-sm mt-4">
+  <div class="card-body">
+    <h5 class="mb-3">Previsão de despesas futuras</h5>
+    <div id="listaPrevisoes" class="list-group"></div>
+    <p id="msgPrevisao" class="small text-muted mt-3 mb-0"></p>
+  </div>
+</div>
 
   <p class="text-center mt-4 small text-muted">@produzido por Silvia Borges 2026</p>
 </main>
