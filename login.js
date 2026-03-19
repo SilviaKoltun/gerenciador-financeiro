@@ -1,48 +1,91 @@
-const form = document.getElementById("formLogin");
-const inputLogin = document.getElementById("login");
-const inputSenha = document.getElementById("senha");
+const formLogin = document.getElementById("formLogin");
+const campoEmail = document.getElementById("login");
+const campoSenha = document.getElementById("senha");
 const msg = document.getElementById("msg");
 
-function validarEmail(email) {
-const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-return regex.test(email);
+function mostrarMensagem(texto, tipo = "danger") {
+  msg.textContent = texto;
+  msg.className = `small text-center text-${tipo}`;
 }
 
-form.addEventListener("submit", (e) => {
-e.preventDefault();
-
-const login = inputLogin.value.trim();
-const senha = inputSenha.value.trim();
-
-msg.textContent = "";
-
-// verificar campos vazios
-if (!login || !senha) {
-msg.textContent = "Preencha login e senha.";
-return;
+function limparMensagem() {
+  msg.textContent = "";
+  msg.className = "small text-center";
 }
 
-// validar email
-if (!validarEmail(login)) {
-msg.textContent = "Digite um e-mail válido.";
-return;
+function emailValido(email) {
+  const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return regex.test(email);
 }
 
-// senha mínima
-if (senha.length < 6) {
-msg.textContent = "A senha deve ter pelo menos 6 caracteres.";
-return;
+function senhaValida(senha) {
+  // Regra:
+  // mínimo 6 caracteres
+  // pelo menos 1 letra
+  // pelo menos 1 número
+  const regex = /^(?=.*[A-Za-z])(?=.*\d).{6,}$/;
+  return regex.test(senha);
 }
 
-// senha precisa ter número
-if (!/\d/.test(senha)) {
-msg.textContent = "A senha deve conter pelo menos 1 número.";
-return;
+function obterUsuarios() {
+  try {
+    return JSON.parse(localStorage.getItem("usuarios")) || [];
+  } catch (erro) {
+    return [];
+  }
 }
 
-// salvar usuário logado
-localStorage.setItem("usuarioLogado", login);
+function salvarSessao(usuario) {
+  localStorage.setItem("usuarioLogado", JSON.stringify(usuario));
+}
 
-// ir para dashboard
-window.location.href = "index.html";
+formLogin.addEventListener("submit", function (e) {
+  e.preventDefault();
+
+  limparMensagem();
+
+  const email = campoEmail.value.trim().toLowerCase();
+  const senha = campoSenha.value.trim();
+
+  if (!email || !senha) {
+    mostrarMensagem("Preencha e-mail e senha.");
+    return;
+  }
+
+  if (!emailValido(email)) {
+    mostrarMensagem("Digite um e-mail válido.");
+    campoEmail.focus();
+    return;
+  }
+
+  if (!senhaValida(senha)) {
+    mostrarMensagem("A senha deve ter pelo menos 6 caracteres, com letra e número.");
+    campoSenha.focus();
+    return;
+  }
+
+  const usuarios = obterUsuarios();
+
+  // procura usuário cadastrado
+  const usuarioEncontrado = usuarios.find(
+    (usuario) =>
+      String(usuario.email || "").toLowerCase() === email &&
+      String(usuario.senha || "") === senha
+  );
+
+  if (!usuarioEncontrado) {
+    mostrarMensagem("E-mail ou senha incorretos.");
+    return;
+  }
+
+  salvarSessao({
+    nome: usuarioEncontrado.nome || "",
+    email: usuarioEncontrado.email
+  });
+
+  mostrarMensagem("Login realizado com sucesso! ✅", "success");
+
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1000);
 });
