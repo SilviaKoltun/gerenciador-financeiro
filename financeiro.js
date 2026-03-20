@@ -12,7 +12,7 @@ const btnLimparTudo = document.getElementById("btnLimparTudo");
 const listaPrevisoes = document.getElementById("listaPrevisoes");
 const msgPrevisao = document.getElementById("msgPrevisao");
 
-// ===== Storage =====
+// Storage 
 function lerLancamentos() {
   try {
     return JSON.parse(localStorage.getItem("lancamentos")) || [];
@@ -33,7 +33,7 @@ function lerRecorrentes() {
   }
 }
 
-// ===== Helpers =====
+// Helpers
 function formatarBRL(valor) {
   return Number(valor || 0).toLocaleString("pt-BR", {
     style: "currency",
@@ -74,7 +74,7 @@ function chaveRecorrencia(origemId, mesRef) {
   return `${origemId}_${mesRef}`;
 }
 
-// ===== Gerar ocorrências =====
+//  Gerar ocorrências 
 function gerarOcorrenciasAteMesAtual(lancamentos, recorrentes) {
   const hoje = new Date();
   const anoAtual = hoje.getFullYear();
@@ -131,7 +131,7 @@ function gerarOcorrenciasAteMesAtual(lancamentos, recorrentes) {
   return lista;
 }
 
-// ===== Previsões futuras =====
+// Previsões futuras 
 function gerarPrevisoesFuturas(recorrentes, quantidadeMeses = 3) {
   const previsoes = [];
   const hoje = new Date();
@@ -164,7 +164,7 @@ function gerarPrevisoesFuturas(recorrentes, quantidadeMeses = 3) {
   return previsoes.sort(compararData);
 }
 
-// ===== Resumo =====
+// Resumo 
 function renderResumo(lista) {
   const totalR = somar(lista, "receita");
   const totalD = somar(lista, "despesa");
@@ -175,7 +175,7 @@ function renderResumo(lista) {
   resumoSaldo.textContent = formatarBRL(saldo);
 }
 
-// ===== Lista principal =====
+// Lista principal 
 function renderLista(lista) {
   listaEl.innerHTML = "";
 
@@ -264,7 +264,7 @@ function renderLista(lista) {
   });
 }
 
-// ===== Lista de previsões =====
+// Lista de previsões 
 function renderPrevisoes(lista) {
   if (!listaPrevisoes || !msgPrevisao) return;
 
@@ -303,7 +303,7 @@ function renderPrevisoes(lista) {
   });
 }
 
-// ===== Busca =====
+// Busca 
 function aplicarBusca(lista, texto) {
   const t = texto.trim().toLowerCase();
   if (!t) return lista;
@@ -315,7 +315,7 @@ function aplicarBusca(lista, texto) {
   });
 }
 
-// ===== Init =====
+// Init 
 const lancamentosBase = lerLancamentos();
 const recorrentes = lerRecorrentes();
 
