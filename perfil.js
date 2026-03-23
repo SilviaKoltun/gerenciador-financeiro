@@ -12,6 +12,7 @@ function validarEmail(valor) {
   return regex.test(valor);
 }
 
+
 function senhaValida(valor) {
   return valor.length >= 6 && /\d/.test(valor);
 }
@@ -105,3 +106,6 @@ form.addEventListener("submit", (e) => {
     window.location.href = "index.html";
   }, 1200);
 });
+module.exports = {
+  validarEmail
+};

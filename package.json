@@ -1,0 +1,12 @@
+{
+  "scripts": {
+    "test": "jest",
+    "test:coverge": "jest --coverge",
+    "test:verbose": "jest --verbose",
+    "test:watch": "jest --watch"
+  },
+  "dependencies": {
+    "jest": "^29.7.0",
+    "jest-environment-jsdom": "^30.3.0"
+  }
+}
